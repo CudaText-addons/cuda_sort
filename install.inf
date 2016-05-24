@@ -1,9 +1,9 @@
 [info]
 title=Sort
-desc=Allows to sort selected lines
+desc=Allows to sort selected lines, with options
 type=cudatext-plugin
 subdir=cuda_sort
-homepage=
+homepage=https://github.com/CudaText-addons/cuda_sort
 
 [item1]
 section=commands
