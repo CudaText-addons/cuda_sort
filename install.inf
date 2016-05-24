@@ -1,0 +1,33 @@
+[info]
+title=Sort
+desc=Allows to sort selected lines
+type=cudatext-plugin
+subdir=cuda_sort
+homepage=
+
+[item1]
+section=commands
+caption=Sort\Sort selection, asc.
+method=sort_asc
+
+[item2]
+section=commands
+caption=Sort\Sort selection, desc.
+method=sort_desc
+
+[item3]
+section=commands
+caption=Sort\Sort selection, ignore case, asc.
+method=sort_asc_nocase
+
+[item4]
+section=commands
+caption=Sort\Sort selection, ignore case, desc.
+method=sort_desc_nocase
+
+[item10]
+section=commands
+caption=Sort\Dialog...
+method=sort_dlg
+
+
