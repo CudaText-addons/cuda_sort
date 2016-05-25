@@ -1,5 +1,7 @@
 
 2016.05.25
++ show vert-block offsets in dlg
++ opt sort_all=1
 + save opts
 + opt offset_from/_to
 + expand tabchars for offset_from/to (new Cuda)

@@ -5,6 +5,15 @@ from cudatext import *
 fn_ini = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_sort.ini')
 section = 'op'
 
+
+def get_offsets():
+    if ed.get_sel_mode()==SEL_COLUMN:
+        r = ed.get_sel_rect()
+        return r[0], r[2]
+    else:
+        return -1, -1
+        
+
 def do_sort(is_reverse, 
             is_nocase, 
             del_dups=False, 
@@ -88,6 +97,8 @@ def do_dialog():
     op_del_dup = ini_read(fn_ini, section, 'del_dup', '1')
     op_del_sp = ini_read(fn_ini, section, 'del_sp', '1')
     
+    op_offset1, op_offset2 = get_offsets()
+    
     c1 = chr(1)
     text = '\n'.join([
       c1.join(['type=check', 'pos=6,6,300,0', 'cap=&Sort descending (reverse)', 'val='+op_rev]),
@@ -96,9 +107,9 @@ def do_dialog():
       c1.join(['type=check', 'pos=6,78,300,0', 'cap=Delete &blank lines', 'val='+op_del_sp]),
       c1.join(['type=label', 'pos=6,106,300,0', 'cap=Sort only by substring, offsets 0-based:']),
       c1.join(['type=label', 'pos=30,128,130,0', 'cap=&From:']),
-      c1.join(['type=spinedit', 'pos=30,146,110,0', 'props=-1,1000,1', 'val=-1']),
+      c1.join(['type=spinedit', 'pos=30,146,110,0', 'props=-1,1000,1', 'val='+str(op_offset1)]),
       c1.join(['type=label', 'pos=120,128,230,0', 'cap=&To:']),
-      c1.join(['type=spinedit', 'pos=120,146,200,0', 'props=-1,1000,1', 'val=-1']),
+      c1.join(['type=spinedit', 'pos=120,146,200,0', 'props=-1,1000,1', 'val='+str(op_offset2)]),
       c1.join(['type=button', 'pos=60,190,160,0', 'cap=OK']),
       c1.join(['type=button', 'pos=164,190,264,0', 'cap=Cancel']),
       ])
