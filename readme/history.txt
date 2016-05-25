@@ -1,6 +1,7 @@
 
 2016.05.25
-+ opt offset1..offset2
++ opt offset_from/_to
++ expand tabchars for offset_from/to (new Cuda)
 
 2016.05.24
 init

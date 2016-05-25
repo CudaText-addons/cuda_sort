@@ -1,3 +1,4 @@
+import cudatext
 from cudatext import *
 
 def do_sort(is_reverse, is_nocase, del_dups, del_blanks,
@@ -19,11 +20,17 @@ def do_sort(is_reverse, is_nocase, del_dups, del_blanks,
     if del_dups:
         lines = list(set(lines))
 
+    is_new_api = hasattr(cudatext, 'CONVERT_LINE_TABS_TO_SPACES')
     def _key(item):
         s = item
         if is_nocase: s = s.lower()
-        if offset2>=0: s = s[:offset2]
-        if offset1>=0: s = s[offset1:]
+
+        if (offset1>=0) or (offset2>=0):
+            if is_new_api:
+                s = ed.convert(CONVERT_LINE_TABS_TO_SPACES, 0, 0, s)
+            if offset2>=0: s = s[:offset2]
+            if offset1>=0: s = s[offset1:]
+            
         return s
     
     lines = sorted(lines, key=_key, reverse=is_reverse)
