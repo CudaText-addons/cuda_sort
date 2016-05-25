@@ -5,19 +5,37 @@ from cudatext import *
 fn_ini = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_sort.ini')
 section = 'op'
 
-def do_sort(is_reverse, is_nocase, del_dups, del_blanks,
-            offset1, offset2):
+def do_sort(is_reverse, 
+            is_nocase, 
+            del_dups=False, 
+            del_blanks=True,
+            offset1=-1, 
+            offset2=-1):
+
+    #option enables to sort all, if no selection            
+    op_sort_all = ini_read(fn_ini, section, 'sort_all', '0')=='1'
+            
+    is_all = False
     nlines = ed.get_line_count()
     line1, line2 = ed.get_sel_lines()
-    if line1>=line2:
+    
+    if line1<0:
+        if op_sort_all:
+            is_all = True
+        else:
+            msg_status('Sort: needed multiline selection')
+            return
+    elif line1>=line2:
         msg_status('Sort: needed multiline selection')
         return
-        
-    #add last empty line
-    if ed.get_text_line(nlines-1) != '':
-        ed.set_text_line(-1, '')
-        
-    lines = [ed.get_text_line(i) for i in range(line1, line2+1)]
+      
+    if is_all:
+        lines = [ed.get_text_line(i) for i in range(nlines)]
+    else:  
+        #add last empty line
+        if ed.get_text_line(nlines-1) != '':
+            ed.set_text_line(-1, '')
+        lines = [ed.get_text_line(i) for i in range(line1, line2+1)]
     
     if del_blanks:
         lines = [s for s in lines if s.strip()]
@@ -38,15 +56,18 @@ def do_sort(is_reverse, is_nocase, del_dups, del_blanks,
         return s
     
     lines = sorted(lines, key=_key, reverse=is_reverse)
-        
-    ed.delete(0, line1, 0, line2+1)
-    ed.insert(0, line1, '\n'.join(lines)+'\n')
-    ed.set_caret(0, line2+1, 0, line1)
+
+    if is_all:
+        ed.set_text_all('\n'.join(lines)+'\n')
+    else:    
+        ed.delete(0, line1, 0, line2+1)
+        ed.insert(0, line1, '\n'.join(lines)+'\n')
+        ed.set_caret(0, line2+1, 0, line1)
     
-    count = (line2-line1+1)
-    text = 'Sorted %d lines'%count \
-        + (', ignore-case' if is_nocase else '') \
-        + (', desc.' if is_reverse else ', asc.') \
+    text = 'Sorted' \
+        + (', all text' if is_all else '') \
+        + (', reverse' if is_reverse else '') \
+        + (', ignore case' if is_nocase else '') \
         + (', offsets %d..%d' % (offset1, offset2) if (offset1>=0) or (offset2>=0) else '')
     msg_status(text)
 
@@ -109,17 +130,19 @@ def do_dialog():
 
 class Command:
     def sort_asc(self):
-        do_sort(False, True, False, True)
+        do_sort(False, False)
     def sort_desc(self):
-        do_sort(True, True, False, True)
+        do_sort(True, False)
         
     def sort_asc_nocase(self):
-        do_sort(False, False, False, True)
+        do_sort(False, True)
     def sort_desc_nocase(self):
-        do_sort(True, False, False, True)
+        do_sort(True, True)
 
     def sort_dlg(self):
         res = do_dialog()
         if res is None: return
         do_sort(*res)
         
+    def config(self):
+        file_open(fn_ini)
