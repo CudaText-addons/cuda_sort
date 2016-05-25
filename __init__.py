@@ -1,17 +1,14 @@
 from cudatext import *
 
-def do_sort(is_reverse, is_case_sens, del_dups, del_blanks):
+def do_sort(is_reverse, is_nocase, del_dups, del_blanks,
+            offset1, offset2):
+    nlines = ed.get_line_count()
     line1, line2 = ed.get_sel_lines()
     if line1>=line2:
         msg_status('Sort: needed multiline selection')
         return
         
-    nlines = ed.get_line_count()
-    if nlines<2:
-        msg_status('Sort: too less lines')
-        return
-        
-    #add last empty ln
+    #add last empty line
     if ed.get_text_line(nlines-1) != '':
         ed.set_text_line(-1, '')
         
@@ -21,9 +18,15 @@ def do_sort(is_reverse, is_case_sens, del_dups, del_blanks):
         lines = [s for s in lines if s.strip()]
     if del_dups:
         lines = list(set(lines))
+
+    def _key(item):
+        s = item
+        if is_nocase: s = s.lower()
+        if offset2>=0: s = s[:offset2]
+        if offset1>=0: s = s[offset1:]
+        return s
     
-    key_func = None if is_case_sens else str.lower
-    lines = sorted(lines, key=key_func, reverse=is_reverse)
+    lines = sorted(lines, key=_key, reverse=is_reverse)
         
     ed.delete(0, line1, 0, line2+1)
     ed.insert(0, line1, '\n'.join(lines)+'\n')
@@ -31,28 +34,35 @@ def do_sort(is_reverse, is_case_sens, del_dups, del_blanks):
     
     count = (line2-line1+1)
     text = 'Sorted %d lines'%count \
-        + (', ignore-case' if not is_case_sens else '') \
+        + (', ignore-case' if is_nocase else '') \
         + (', desc.' if is_reverse else ', asc.')
     msg_status(text)
 
 
 def do_dialog():
     size_x = 330
-    size_y = 150
+    size_y = 220
     id_rev = 0
     id_nocase = 1
     id_del_dup = 2
     id_del_sp = 3
-    id_ok = 4
+    id_offset1 = 7
+    id_offset2 = 8
+    id_ok = 9
     
     c1 = chr(1)
     text = '\n'.join([
       c1.join(['type=check', 'pos=6,6,300,0', 'cap=Sort descending (reverse)']),
-      c1.join(['type=check', 'pos=6,32,300,0', 'cap=Ignore case']),
-      c1.join(['type=check', 'pos=6,58,300,0', 'cap=Delete duplicate lines', 'val=1']),
-      c1.join(['type=check', 'pos=6,84,300,0', 'cap=Delete blank lines', 'val=1']),
-      c1.join(['type=button', 'pos=60,120,160,0', 'cap=OK']),
-      c1.join(['type=button', 'pos=164,120,264,0', 'cap=Cancel']),
+      c1.join(['type=check', 'pos=6,30,300,0', 'cap=Ignore case']),
+      c1.join(['type=check', 'pos=6,54,300,0', 'cap=Delete duplicate lines', 'val=1']),
+      c1.join(['type=check', 'pos=6,78,300,0', 'cap=Delete blank lines', 'val=1']),
+      c1.join(['type=label', 'pos=6,106,300,0', 'cap=Sort only by substring, offsets 0-based:']),
+      c1.join(['type=label', 'pos=30,128,100,0', 'cap=From:']),
+      c1.join(['type=label', 'pos=30,156,100,0', 'cap=To:']),
+      c1.join(['type=spinedit', 'pos=100,126,190,0', 'props=-1,1000,1', 'val=-1']),
+      c1.join(['type=spinedit', 'pos=100,154,190,0', 'props=-1,1000,1', 'val=-1']),
+      c1.join(['type=button', 'pos=60,190,160,0', 'cap=OK']),
+      c1.join(['type=button', 'pos=164,190,264,0', 'cap=Cancel']),
       ])
     
     res = dlg_custom('Sort lines', size_x, size_y, text)
@@ -65,7 +75,14 @@ def do_dialog():
     is_nocase = text[id_nocase]=='1'
     is_del_dup = text[id_del_dup]=='1'
     is_del_sp = text[id_del_sp]=='1'
-    return (is_rev, not is_nocase, is_del_dup, is_del_sp)
+    offset1 = int(text[id_offset1])
+    offset2 = int(text[id_offset2])
+    
+    if (offset1>=0) and (offset2>=0) and (offset1>=offset2):
+        msg_box('Incorrect offsets: %d..%d' % (offset1, offset2), MB_OK + MB_ICONERROR)
+        return
+    
+    return (is_rev, is_nocase, is_del_dup, is_del_sp, offset1, offset2)
     
 
 class Command:
