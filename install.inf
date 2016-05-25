@@ -17,20 +17,30 @@ method=sort_desc
 
 [item3]
 section=commands
-caption=Sort\Sort, ignore case, asc.
+caption=Sort\Sort, asc., ignore case
 method=sort_asc_nocase
 
 [item4]
 section=commands
-caption=Sort\Sort, ignore case, desc.
+caption=Sort\Sort, desc., ignore case
 method=sort_desc_nocase
+
+[item9]
+section=commands
+caption=Sort\-
+method=_
 
 [item10]
 section=commands
-caption=Sort\Dialog...
-method=sort_dlg
+caption=Sort\Edit config
+method=config
+
+[item19]
+section=commands
+caption=Sort\-
+method=_
 
 [item20]
 section=commands
-caption=Sort\Edit config
-method=config
+caption=Sort\Dialog...
+method=sort_dlg

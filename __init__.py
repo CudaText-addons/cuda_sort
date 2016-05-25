@@ -156,4 +156,7 @@ class Command:
         do_sort(*res)
         
     def config(self):
+        if not os.path.isfile(fn_ini):
+            with open(fn_ini, 'w') as f:
+                f.write('[op]\n')
         file_open(fn_ini)
