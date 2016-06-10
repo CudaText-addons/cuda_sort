@@ -1,6 +1,10 @@
 
 2016.06.10
-+ option "numeric"
+- "numeric" must be after "offsets"
+- "numeric" must ignore lead-spaces
+
+2016.06.10
++ opt "numeric"
 
 2016.05.25
 + show vert-block offsets in dlg

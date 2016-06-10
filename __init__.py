@@ -70,16 +70,17 @@ def do_sort(is_reverse,
         if is_nocase: 
             s = s.lower()
 
-        if is_numeric:        
-            num, text = get_num_and_text(s)
-            #print('parts "%s": %d %s' % (s, num, text))
-            s = '%20.20d ' % num + text
-
         if (offset1>=0) or (offset2>=0):
             if is_new_api:
                 s = ed.convert(CONVERT_LINE_TABS_TO_SPACES, 0, 0, s)
             if offset2>=0: s = s[:offset2]
             if offset1>=0: s = s[offset1:]
+
+        #numeric must be after offsets
+        if is_numeric:        
+            num, text = get_num_and_text(s.lstrip())
+            #print('parts "%s": %d %s' % (s, num, text))
+            s = '%20.20d ' % num + text
             
         return s
 
