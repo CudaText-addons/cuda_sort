@@ -17,7 +17,10 @@ def get_offsets():
 def get_num_and_text(s):
     n = 0
     while n<len(s) and s[n].isdigit(): n += 1
-    num = int(s[:n])
+    try:
+        num = int(s[:n])
+    except:
+        num = 0
     text = s[n:]
     return (num, text)
         
