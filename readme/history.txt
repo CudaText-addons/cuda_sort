@@ -1,4 +1,7 @@
 
+2016.06.10
++ option "numeric"
+
 2016.05.25
 + show vert-block offsets in dlg
 + opt sort_all=1
