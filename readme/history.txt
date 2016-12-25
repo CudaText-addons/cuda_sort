@@ -1,7 +1,10 @@
 
-2016.12.25
-+ add cmd: Shuffle lines
+2016.12.26
 + add cmd: Reverse lines
++ add cmd: Shuffle lines
++ add cmd: Extract dups
++ add cmd: Extract dups, ignore case
++ add cmd: Extract unique
 
 2016.06.10
 - "numeric" must be after "offsets"

@@ -1,6 +1,11 @@
 Plugin for CudaText.
 Gives commands + dialog to sort lines.
-Gives also other lines-commands: shuffle, reverse.
+Gives also other commands: 
+- Reverse lines
+- Shuffle lines
+- Extract duplicate lines
+- Extract duplicate lines, ignore case
+- Extract unique lines
 
 
 To allow to sort all text, if no selection, set the option:

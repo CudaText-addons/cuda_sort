@@ -32,7 +32,7 @@ def get_num_and_text(s):
     return (num, text)
 
 
-def get_list_shuffle(lines):
+def get_shuffle(lines):
     l1 = lines
     l2 = []
     while l1:
@@ -40,6 +40,29 @@ def get_list_shuffle(lines):
         l2.append(l1[n])
         del l1[n]
     return l2
+
+
+def get_dups(lines, nocase):
+    l = lines
+    res = []
+    while l:
+        s = l[0]
+        del l[0]
+        for i in reversed(range(len(l))):
+            if nocase:
+                ok = s.lower()==l[i].lower()
+            else:
+                ok = s==l[i]
+            if ok:
+                if s not in res:
+                    res.append(s)
+                del l[i]
+    return res
+
+
+def get_uniq(lines):
+    return sorted(list(set(lines)))
+    
     
 
 def get_input_lines():
@@ -88,7 +111,7 @@ def do_line_op(op):
     lines, is_all, line1, line2 = res          
     
     if op=='shuffle':
-        lines = get_list_shuffle(lines)
+        lines = get_shuffle(lines)
     elif op=='reverse':
         lines = reversed(lines)
     else:
@@ -99,13 +122,37 @@ def do_line_op(op):
     msg_status('Lines operation: '+op)
 
 
-def do_sort(is_reverse, 
-            is_nocase, 
-            del_dups=False, 
-            del_blanks=True,
-            is_numeric=False,
-            offset1=-1, 
-            offset2=-1):
+def do_extract_op(op):
+      
+    do_read_ops()
+    res = get_input_lines()
+    if not res: return
+    lines, is_all, line1, line2 = res          
+    
+    if op=='dups':
+        lines = get_dups(lines, False)
+    elif op=='dups_nocase':
+        lines = get_dups(lines, True)
+    elif op=='unique':
+        lines = get_uniq(lines)
+    else:
+        msg_status('Unknown operation: '+op)
+        return
+
+    file_open('')
+    ed.set_prop(PROP_TAB_TITLE, op)
+    ed.set_text_all('\n'.join(lines))    
+    msg_status('Extract lines operation: '+op)
+
+
+def do_sort(
+        is_reverse, 
+        is_nocase, 
+        del_dups=False, 
+        del_blanks=True,
+        is_numeric=False,
+        offset1=-1, 
+        offset2=-1):
 
     do_read_ops()
     res = get_input_lines()
@@ -242,8 +289,8 @@ class Command:
         do_line_op('reverse')
 
     def get_dups(self):
-        do_get_op('dup')
+        do_extract_op('dups')
     def get_dups_nocase(self):
-        do_get_op('dup_i')
+        do_extract_op('dups_nocase')
     def get_uniq(self):
-        do_get_op('uniq')
+        do_extract_op('unique')

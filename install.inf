@@ -52,12 +52,12 @@ method=shuffle
 
 [item40]
 section=commands
-caption=Sort\Extract duplicated lines
+caption=Sort\Extract duplicate lines
 method=get_dups
 
 [item41]
 section=commands
-caption=Sort\Extract duplicated lines, ignore case
+caption=Sort\Extract duplicate lines, ignore case
 method=get_dups_nocase
 
 [item42]
