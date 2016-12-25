@@ -1,5 +1,6 @@
 import os
 import cudatext
+from random import randint
 from cudatext import *
 
 fn_ini = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_sort.ini')
@@ -23,7 +24,49 @@ def get_num_and_text(s):
         num = 0
     text = s[n:]
     return (num, text)
-        
+
+
+def get_list_shuffle(lines):
+    l1 = lines
+    l2 = []
+    while l1:
+        n = randint(0, len(l1)-1)
+        l2.append(l1[n])
+        del l1[n]
+    return l2
+    
+
+def do_line_op(op):
+    nlines = ed.get_line_count()
+    line1, line2 = ed.get_sel_lines()
+    
+    if line1<0:
+        msg_status('Needed multiline selection')
+        return
+    elif line1>=line2:
+        msg_status('Needed multiline selection')
+        return
+      
+    #add last empty line
+    if ed.get_text_line(nlines-1) != '':
+        ed.set_text_line(-1, '')
+    lines = [ed.get_text_line(i) for i in range(line1, line2+1)]
+    
+    if op=='shuffle':
+        lines = get_list_shuffle(lines)
+    elif op=='reverse':
+        lines = reversed(lines)
+    else:
+        msg_status('Unknown operation: '+op)
+        return
+    
+    ed.delete(0, line1, 0, line2+1)
+    ed.insert(0, line1, '\n'.join(lines)+'\n')
+    ed.set_caret(0, line2+1, 0, line1)
+    
+    msg_status('Lines operation: '+op)
+    
+    
 
 def do_sort(is_reverse, 
             is_nocase, 
@@ -179,6 +222,11 @@ class Command:
         do_sort(False, True)
     def sort_desc_nocase(self):
         do_sort(True, True)
+        
+    def shuffle(self):
+        do_line_op('shuffle')
+    def reverse(self):
+        do_line_op('reverse')
 
     def sort_dlg(self):
         res = do_dialog()

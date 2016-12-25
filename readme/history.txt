@@ -1,4 +1,8 @@
 
+2016.12.25
++ add cmd: Shuffle lines
++ add cmd: Reverse lines
+
 2016.06.10
 - "numeric" must be after "offsets"
 - "numeric" must ignore lead-spaces

@@ -25,16 +25,6 @@ section=commands
 caption=Sort\Sort, desc., ignore case
 method=sort_desc_nocase
 
-[item9]
-section=commands
-caption=Sort\-
-method=_
-
-[item10]
-section=commands
-caption=Sort\Edit config
-method=config
-
 [item19]
 section=commands
 caption=Sort\-
@@ -44,3 +34,29 @@ method=_
 section=commands
 caption=Sort\Dialog...
 method=sort_dlg
+
+[item30]
+section=commands
+caption=Sort\-
+method=_
+
+[item31]
+section=commands
+caption=Sort\Shuffle lines
+method=shuffle
+
+[item32]
+section=commands
+caption=Sort\Reverse lines
+method=reverse
+
+
+[item100]
+section=commands
+caption=Sort\-
+method=_
+
+[item101]
+section=commands
+caption=Sort\Edit config
+method=config
