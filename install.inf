@@ -42,13 +42,28 @@ method=_
 
 [item31]
 section=commands
-caption=Sort\Shuffle lines
-method=shuffle
+caption=Sort\Reverse lines
+method=reverse
 
 [item32]
 section=commands
-caption=Sort\Reverse lines
-method=reverse
+caption=Sort\Shuffle lines
+method=shuffle
+
+[item40]
+section=commands
+caption=Sort\Extract duplicated lines
+method=get_dups
+
+[item41]
+section=commands
+caption=Sort\Extract duplicated lines, ignore case
+method=get_dups_nocase
+
+[item42]
+section=commands
+caption=Sort\Extract unique lines
+method=get_uniq
 
 
 [item100]

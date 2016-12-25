@@ -4,7 +4,13 @@ from random import randint
 from cudatext import *
 
 fn_ini = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_sort.ini')
-section = 'op'
+op_sort_all = False
+op_section = 'op'
+
+
+def do_read_ops():
+    global op_sort_all
+    op_sort_all = ini_read(fn_ini, op_section, 'sort_all', '0')=='1'
 
 
 def get_offsets():
@@ -36,21 +42,50 @@ def get_list_shuffle(lines):
     return l2
     
 
-def do_line_op(op):
+def get_input_lines():
+
+    global op_sort_all
+    is_all = False
     nlines = ed.get_line_count()
     line1, line2 = ed.get_sel_lines()
     
     if line1<0:
-        msg_status('Needed multiline selection')
-        return
+        if op_sort_all:
+            is_all = True
+        else:
+            msg_status('Needed multiline selection')
+            return
     elif line1>=line2:
         msg_status('Needed multiline selection')
         return
+
+    if is_all:
+        lines = [ed.get_text_line(i) for i in range(nlines)]
+    else:  
+        #add last empty line
+        if ed.get_text_line(nlines-1) != '':
+            ed.set_text_line(-1, '')
+        lines = [ed.get_text_line(i) for i in range(line1, line2+1)]
+        
+    return lines, is_all, line1, line2
+    
+
+def set_output_lines(lines, is_all, line1, line2):
+
+    if is_all:
+        ed.set_text_all('\n'.join(lines)+'\n')
+    else:    
+        ed.delete(0, line1, 0, line2+1)
+        ed.insert(0, line1, '\n'.join(lines)+'\n')
+        ed.set_caret(0, line2+1, 0, line1)
+        
+
+def do_line_op(op):
       
-    #add last empty line
-    if ed.get_text_line(nlines-1) != '':
-        ed.set_text_line(-1, '')
-    lines = [ed.get_text_line(i) for i in range(line1, line2+1)]
+    do_read_ops()
+    res = get_input_lines()
+    if not res: return
+    lines, is_all, line1, line2 = res          
     
     if op=='shuffle':
         lines = get_list_shuffle(lines)
@@ -60,13 +95,9 @@ def do_line_op(op):
         msg_status('Unknown operation: '+op)
         return
     
-    ed.delete(0, line1, 0, line2+1)
-    ed.insert(0, line1, '\n'.join(lines)+'\n')
-    ed.set_caret(0, line2+1, 0, line1)
-    
+    set_output_lines(lines, is_all, line1, line2)
     msg_status('Lines operation: '+op)
-    
-    
+
 
 def do_sort(is_reverse, 
             is_nocase, 
@@ -76,30 +107,10 @@ def do_sort(is_reverse,
             offset1=-1, 
             offset2=-1):
 
-    #option enables to sort all, if no selection            
-    op_sort_all = ini_read(fn_ini, section, 'sort_all', '0')=='1'
-            
-    is_all = False
-    nlines = ed.get_line_count()
-    line1, line2 = ed.get_sel_lines()
-    
-    if line1<0:
-        if op_sort_all:
-            is_all = True
-        else:
-            msg_status('Sort: needed multiline selection')
-            return
-    elif line1>=line2:
-        msg_status('Sort: needed multiline selection')
-        return
-      
-    if is_all:
-        lines = [ed.get_text_line(i) for i in range(nlines)]
-    else:  
-        #add last empty line
-        if ed.get_text_line(nlines-1) != '':
-            ed.set_text_line(-1, '')
-        lines = [ed.get_text_line(i) for i in range(line1, line2+1)]
+    do_read_ops()
+    res = get_input_lines()
+    if not res: return
+    lines, is_all, line1, line2 = res          
     
     if del_blanks:
         lines = [s for s in lines if s.strip()]
@@ -128,17 +139,8 @@ def do_sort(is_reverse,
         return s
 
         
-    lines = sorted(lines, 
-        key=_key, 
-        reverse=is_reverse
-        )
-
-    if is_all:
-        ed.set_text_all('\n'.join(lines)+'\n')
-    else:    
-        ed.delete(0, line1, 0, line2+1)
-        ed.insert(0, line1, '\n'.join(lines)+'\n')
-        ed.set_caret(0, line2+1, 0, line1)
+    lines = sorted(lines, key=_key, reverse=is_reverse)
+    set_output_lines(lines, is_all, line1, line2)
     
     text = 'Sorted' \
         + (', all text' if is_all else '') \
@@ -161,11 +163,11 @@ def do_dialog():
     id_offset2 = 9
     id_ok = 10
     
-    op_rev = ini_read(fn_ini, section, 'rev', '0')
-    op_nocase = ini_read(fn_ini, section, 'nocase', '0')
-    op_del_dup = ini_read(fn_ini, section, 'del_dup', '1')
-    op_del_sp = ini_read(fn_ini, section, 'del_sp', '1')
-    op_numeric = ini_read(fn_ini, section, 'numeric', '0')
+    op_rev = ini_read(fn_ini, op_section, 'rev', '0')
+    op_nocase = ini_read(fn_ini, op_section, 'nocase', '0')
+    op_del_dup = ini_read(fn_ini, op_section, 'del_dup', '1')
+    op_del_sp = ini_read(fn_ini, op_section, 'del_sp', '1')
+    op_numeric = ini_read(fn_ini, op_section, 'numeric', '0')
     
     op_offset1, op_offset2 = get_offsets()
     
@@ -191,11 +193,11 @@ def do_dialog():
     if btn != id_ok: return
     text = text.splitlines()
     
-    ini_write(fn_ini, section, 'rev', text[id_rev])
-    ini_write(fn_ini, section, 'nocase', text[id_nocase])
-    ini_write(fn_ini, section, 'del_dup', text[id_del_dup])
-    ini_write(fn_ini, section, 'del_sp', text[id_del_sp])
-    ini_write(fn_ini, section, 'numeric', text[id_numeric])
+    ini_write(fn_ini, op_section, 'rev', text[id_rev])
+    ini_write(fn_ini, op_section, 'nocase', text[id_nocase])
+    ini_write(fn_ini, op_section, 'del_dup', text[id_del_dup])
+    ini_write(fn_ini, op_section, 'del_sp', text[id_del_sp])
+    ini_write(fn_ini, op_section, 'numeric', text[id_numeric])
     
     is_rev = text[id_rev]=='1'
     is_nocase = text[id_nocase]=='1'
@@ -223,11 +225,6 @@ class Command:
     def sort_desc_nocase(self):
         do_sort(True, True)
         
-    def shuffle(self):
-        do_line_op('shuffle')
-    def reverse(self):
-        do_line_op('reverse')
-
     def sort_dlg(self):
         res = do_dialog()
         if res is None: return
@@ -238,3 +235,15 @@ class Command:
             with open(fn_ini, 'w') as f:
                 f.write('[op]\n')
         file_open(fn_ini)
+
+    def shuffle(self):
+        do_line_op('shuffle')
+    def reverse(self):
+        do_line_op('reverse')
+
+    def get_dups(self):
+        do_get_op('dup')
+    def get_dups_nocase(self):
+        do_get_op('dup_i')
+    def get_uniq(self):
+        do_get_op('uniq')
