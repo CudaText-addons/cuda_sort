@@ -4,13 +4,7 @@ from random import randint
 from cudatext import *
 
 fn_ini = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_sort.ini')
-op_sort_all = False
 op_section = 'op'
-
-
-def do_read_ops():
-    global op_sort_all
-    op_sort_all = ini_read(fn_ini, op_section, 'sort_all', '0')=='1'
 
 
 def get_offsets():
@@ -64,10 +58,10 @@ def get_uniq(lines):
     return sorted(list(set(lines)))
     
     
+def get_input():
 
-def get_input_lines():
-
-    global op_sort_all
+    op_sort_all = ini_read(fn_ini, op_section, 'sort_all', '0')=='1'
+    
     is_all = False
     nlines = ed.get_line_count()
     line1, line2 = ed.get_sel_lines()
@@ -93,10 +87,10 @@ def get_input_lines():
     return lines, is_all, line1, line2
     
 
-def set_output_lines(lines, is_all, line1, line2):
+def set_output(lines, is_all, line1, line2):
 
     if is_all:
-        ed.set_text_all('\n'.join(lines)+'\n')
+        ed.set_text_all('\n'.join(lines))
     else:    
         ed.delete(0, line1, 0, line2+1)
         ed.insert(0, line1, '\n'.join(lines)+'\n')
@@ -105,8 +99,7 @@ def set_output_lines(lines, is_all, line1, line2):
 
 def do_line_op(op):
       
-    do_read_ops()
-    res = get_input_lines()
+    res = get_input()
     if not res: return
     lines, is_all, line1, line2 = res          
     
@@ -114,18 +107,23 @@ def do_line_op(op):
         lines = get_shuffle(lines)
     elif op=='reverse':
         lines = reversed(lines)
+    elif op=='del_blank':
+        lines = [s for s in lines if s.strip()]
+    elif op=='del_blank_dup':
+        for i in reversed(range(len(lines))):
+            if i>0 and lines[i].strip()=='' and lines[i-1].strip()=='':
+                del lines[i]
     else:
         msg_status('Unknown operation: '+op)
         return
     
-    set_output_lines(lines, is_all, line1, line2)
+    set_output(lines, is_all, line1, line2)
     msg_status('Lines operation: '+op)
 
 
 def do_extract_op(op):
       
-    do_read_ops()
-    res = get_input_lines()
+    res = get_input()
     if not res: return
     lines, is_all, line1, line2 = res          
     
@@ -154,8 +152,7 @@ def do_sort(
         offset1=-1, 
         offset2=-1):
 
-    do_read_ops()
-    res = get_input_lines()
+    res = get_input()
     if not res: return
     lines, is_all, line1, line2 = res          
     
@@ -187,7 +184,7 @@ def do_sort(
 
         
     lines = sorted(lines, key=_key, reverse=is_reverse)
-    set_output_lines(lines, is_all, line1, line2)
+    set_output(lines, is_all, line1, line2)
     
     text = 'Sorted' \
         + (', all text' if is_all else '') \
@@ -294,3 +291,8 @@ class Command:
         do_extract_op('dups_nocase')
     def get_uniq(self):
         do_extract_op('unique')
+
+    def del_blank(self):
+        do_line_op('del_blank')
+    def del_blank_dup(self):
+        do_line_op('del_blank_dup')

@@ -1,6 +1,6 @@
 [info]
 title=Sort
-desc=Allows to sort selected lines, with options
+desc=Commands for lines: sort, find dups, reverse, shuffle etc.
 type=cudatext-plugin
 subdir=cuda_sort
 homepage=https://github.com/CudaText-addons/cuda_sort
@@ -64,6 +64,22 @@ method=get_dups_nocase
 section=commands
 caption=Sort\Extract unique lines
 method=get_uniq
+
+
+[item50]
+section=commands
+caption=Sort\-
+method=_
+
+[item51]
+section=commands
+caption=Sort\Remove blank lines
+method=del_blank
+
+[item52]
+section=commands
+caption=Sort\Remove duplicate blank lines
+method=del_blank_dup
 
 
 [item100]

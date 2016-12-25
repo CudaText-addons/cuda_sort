@@ -5,13 +5,11 @@
 + add cmd: Extract dups
 + add cmd: Extract dups, ignore case
 + add cmd: Extract unique
++ add cmd: Remove blank lines
++ add cmd: Remove dup blank lines
 
 2016.06.10
-- "numeric" must be after "offsets"
-- "numeric" must ignore lead-spaces
-
-2016.06.10
-+ opt "numeric"
++ opt "Numeric sort"
 
 2016.05.25
 + show vert-block offsets in dlg
