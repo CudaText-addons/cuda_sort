@@ -4,7 +4,7 @@ from random import randint
 from cudatext import *
 from .app_specific import *
 
-fn_ini = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_sort.ini')
+fn_ini = get_ini_fn()
 op_section = 'op'
 
 
@@ -61,11 +61,11 @@ def get_uniq(lines):
     
 def get_input():
 
-    op_sort_all = ini_read(fn_ini, op_section, 'sort_all', '0')=='1'
+    op_sort_all = ini_read(fn_ini, op_section, 'allow_all', '0')=='1'
     
     is_all = False
     nlines = ed.get_line_count()
-    line1, line2 = ed.get_sel_lines()
+    line1, line2 = ed_get_sel_lines()
     
     if line1<0:
         if op_sort_all:
@@ -78,7 +78,7 @@ def get_input():
         return
 
     if is_all:
-        lines = [ed.get_text_line(i) for i in range(nlines)]
+        lines = ed_get_text_all()
     else:  
         #add last empty line
         if ed.get_text_line(nlines-1) != '':
@@ -91,7 +91,7 @@ def get_input():
 def set_output(lines, is_all, line1, line2):
 
     if is_all:
-        ed.set_text_all('\n'.join(lines))
+        ed_set_text_all(lines)
     else:
         ed_insert_to_lines(lines, line1, line2)
         
@@ -160,7 +160,7 @@ def do_extract_op(op):
 
     file_open('')
     ed_set_tab_title(op)
-    ed.set_text_all('\n'.join(lines))    
+    ed_set_text_all(lines)    
     msg_status('Extract lines operation: '+op)
 
 
