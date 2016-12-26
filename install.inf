@@ -1,6 +1,6 @@
 [info]
 title=Sort
-desc=Commands for lines: sort, find dups, reverse, shuffle etc.
+desc=Commands for lines: sort, reverse, shuffle, find duplicates, find uniques, delete duplicates etc.
 type=cudatext-plugin
 subdir=cuda_sort
 homepage=https://github.com/CudaText-addons/cuda_sort
@@ -32,7 +32,7 @@ method=_
 
 [item20]
 section=commands
-caption=Sort\Dialog...
+caption=Sort\Sort - Dialog...
 method=sort_dlg
 
 [item30]
@@ -49,6 +49,27 @@ method=reverse
 section=commands
 caption=Sort\Shuffle lines
 method=shuffle
+
+[item35]
+section=commands
+caption=Sort\-
+method=_
+
+[item36]
+section=commands
+caption=Sort\Remove duplicate lines
+method=del_dup
+
+[item37]
+section=commands
+caption=Sort\Remove duplicate lines + origins
+method=del_dup_orig
+
+[item38]
+section=commands
+caption=Sort\Remove adjacent duplicate lines
+method=del_dup_adj
+
 
 [item40]
 section=commands
@@ -78,8 +99,8 @@ method=del_blank
 
 [item52]
 section=commands
-caption=Sort\Remove duplicate blank lines
-method=del_blank_dup
+caption=Sort\Remove adjacent blank lines
+method=del_blank_adj
 
 
 [item100]

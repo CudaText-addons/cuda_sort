@@ -27,7 +27,7 @@ def get_num_and_text(s):
 
 
 def get_shuffle(lines):
-    l1 = lines
+    l1 = list(lines)
     l2 = []
     while l1:
         n = randint(0, len(l1)-1)
@@ -37,7 +37,7 @@ def get_shuffle(lines):
 
 
 def get_dups(lines, nocase):
-    l = lines
+    l = list(lines)
     res = []
     while l:
         s = l[0]
@@ -105,14 +105,36 @@ def do_line_op(op):
     
     if op=='shuffle':
         lines = get_shuffle(lines)
+        
     elif op=='reverse':
         lines = reversed(lines)
-    elif op=='del_blank':
+        
+    elif op=='delete_blanks':
         lines = [s for s in lines if s.strip()]
-    elif op=='del_blank_dup':
+        
+    elif op=='delete_blanks_adjacent':
         for i in reversed(range(len(lines))):
             if i>0 and lines[i].strip()=='' and lines[i-1].strip()=='':
                 del lines[i]
+                
+    elif op=='delete_dups':
+        for i in range(len(lines)-1, 0, -1):
+            for j in range(i-1, -1, -1):
+                if lines[i]==lines[j]:
+                    del lines[i]
+                    break
+        
+    elif op=='delete_dups_origins':
+        dups = get_dups(lines, False)
+        for i in reversed(range(len(lines))):
+            if lines[i] in dups:
+                del lines[i]
+        
+    elif op=='delete_dups_adjacent':
+        for i in reversed(range(len(lines))):
+            if i>0 and lines[i]==lines[i-1]:
+                del lines[i]
+        
     else:
         msg_status('Unknown operation: '+op)
         return
@@ -284,6 +306,17 @@ class Command:
         do_line_op('shuffle')
     def reverse(self):
         do_line_op('reverse')
+        
+    def del_dup(self):
+        do_line_op('delete_dups')
+    def del_dup_orig(self):
+        do_line_op('delete_dups_origins')
+    def del_dup_adj(self):
+        do_line_op('delete_dups_adjacent')
+    def del_blank(self):
+        do_line_op('delete_blanks')
+    def del_blank_adj(self):
+        do_line_op('delete_blanks_adjacent')
 
     def get_dups(self):
         do_extract_op('dups')
@@ -291,8 +324,3 @@ class Command:
         do_extract_op('dups_nocase')
     def get_uniq(self):
         do_extract_op('unique')
-
-    def del_blank(self):
-        do_line_op('del_blank')
-    def del_blank_dup(self):
-        do_line_op('del_blank_dup')

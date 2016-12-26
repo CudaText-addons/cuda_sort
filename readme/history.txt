@@ -5,8 +5,11 @@
 + add cmd: Extract dups
 + add cmd: Extract dups, ignore case
 + add cmd: Extract unique
-+ add cmd: Remove blank lines
-+ add cmd: Remove dup blank lines
++ add cmd: Remove blanks
++ add cmd: Remove adjacent blanks
++ add cmd: Remove dups
++ add cmd: Remove dups + origins
++ add cmd: Remove adjacent dups
 
 2016.06.10
 + opt "Numeric sort"
