@@ -1,5 +1,4 @@
 import os
-import cudatext
 from random import randint
 from cudatext import *
 from .app_specific import *
@@ -158,10 +157,14 @@ def do_extract_op(op):
         msg_status('Unknown operation: '+op)
         return
 
+    if not lines:
+        msg_status('Cannot extract any lines')
+        return
+
     file_open('')
     ed_set_tab_title(op)
     ed_set_text_all(lines)    
-    msg_status('Extract lines operation: '+op)
+    msg_status('Extract lines: '+op)
 
 
 def do_sort(
