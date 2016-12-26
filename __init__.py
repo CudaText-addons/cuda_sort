@@ -2,6 +2,7 @@ import os
 import cudatext
 from random import randint
 from cudatext import *
+from .app_specific import *
 
 fn_ini = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_sort.ini')
 op_section = 'op'
@@ -91,10 +92,8 @@ def set_output(lines, is_all, line1, line2):
 
     if is_all:
         ed.set_text_all('\n'.join(lines))
-    else:    
-        ed.delete(0, line1, 0, line2+1)
-        ed.insert(0, line1, '\n'.join(lines)+'\n')
-        ed.set_caret(0, line2+1, 0, line1)
+    else:
+        ed_insert_to_lines(lines, line1, line2)
         
 
 def do_line_op(op):
@@ -160,7 +159,7 @@ def do_extract_op(op):
         return
 
     file_open('')
-    ed.set_prop(PROP_TAB_TITLE, op)
+    ed_set_tab_title(op)
     ed.set_text_all('\n'.join(lines))    
     msg_status('Extract lines operation: '+op)
 
@@ -183,16 +182,13 @@ def do_sort(
     if del_dups:
         lines = list(set(lines))
 
-    is_new_api = hasattr(cudatext, 'CONVERT_LINE_TABS_TO_SPACES')
-
     def _key(item):
         s = item
         if is_nocase: 
             s = s.lower()
 
         if (offset1>=0) or (offset2>=0):
-            if is_new_api:
-                s = ed.convert(CONVERT_LINE_TABS_TO_SPACES, 0, 0, s)
+            s = ed_convert_tabs_to_spaces(s)
             if offset2>=0: s = s[:offset2]
             if offset1>=0: s = s[offset1:]
 
@@ -274,7 +270,7 @@ def do_dialog():
     offset2 = int(text[id_offset2])
     
     if (offset1>=0) and (offset2>=0) and (offset1>=offset2):
-        msg_box('Incorrect offsets: %d..%d' % (offset1, offset2), MB_OK + MB_ICONERROR)
+        msg_show_error('Incorrect offsets: %d..%d' % (offset1, offset2))
         return
     
     return (is_rev, is_nocase, is_del_dup, is_del_sp, is_numeric, offset1, offset2)
