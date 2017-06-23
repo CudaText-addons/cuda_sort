@@ -1,4 +1,7 @@
 
+2017.06.23
++ moved function of plugin "Ini Sort" here, 2 commands
+
 2016.12.26.2
 + add cmd: Reverse lines
 + add cmd: Shuffle lines

@@ -103,6 +103,24 @@ caption=Sort\Remove adjacent blank lines
 method=del_blank_adj
 
 
+[item90]
+section=commands
+caption=Sort\-
+method=_
+
+[item91]
+section=commands
+caption=Sort\Ini file: sort sections and keys
+method=ini_sort_all
+lexers=Ini files
+
+[item92]
+section=commands
+caption=Sort\Ini file: sort sections, but not keys
+method=ini_sort_not_keys
+lexers=Ini files
+
+
 [item100]
 section=commands
 caption=Sort\-

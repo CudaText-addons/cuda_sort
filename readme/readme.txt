@@ -1,5 +1,6 @@
 Plugin for CudaText.
-Gives commands + dialog to sort lines.
+Gives commands + dialog (with sorting options) to sort lines.
+
 Gives also other commands: 
 - Reverse lines
 - Shuffle lines
@@ -11,6 +12,8 @@ Gives also other commands:
 - Remove adjacent duplicate lines
 - Remove blank lines
 - Remove adjacent blank lines
+- Ini file: sort sections + keys
+- Ini file: sort sections w/o keys
 
 
 To allow to handle all text w/out selection, set the option:
@@ -21,4 +24,3 @@ allow_all=1
 
 Author: Alexey (CudaText)
 License: MIT
-

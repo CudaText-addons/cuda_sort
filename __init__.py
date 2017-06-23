@@ -2,6 +2,7 @@ import os
 from random import randint
 from cudatext import *
 from .app_specific import *
+from .sort_ini import *
 
 fn_ini = get_ini_fn()
 op_section = 'op'
@@ -56,16 +57,16 @@ def get_dups(lines, nocase):
 
 def get_uniq(lines):
     return sorted(list(set(lines)))
-    
-    
+
+
 def get_input():
 
     op_sort_all = ini_read(fn_ini, op_section, 'allow_all', '0')=='1'
-    
+
     is_all = False
     nlines = ed.get_line_count()
     line1, line2 = ed_get_sel_lines()
-    
+
     if line1<0:
         if op_sort_all:
             is_all = True
@@ -78,14 +79,14 @@ def get_input():
 
     if is_all:
         lines = ed_get_text_all()
-    else:  
+    else:
         #add last empty line
         if ed.get_text_line(nlines-1) != '':
             ed.set_text_line(-1, '')
         lines = [ed.get_text_line(i) for i in range(line1, line2+1)]
-        
+
     return lines, is_all, line1, line2
-    
+
 
 def set_output(lines, is_all, line1, line2):
 
@@ -93,60 +94,60 @@ def set_output(lines, is_all, line1, line2):
         ed_set_text_all(lines)
     else:
         ed_insert_to_lines(lines, line1, line2)
-        
+
 
 def do_line_op(op):
-      
+
     res = get_input()
     if not res: return
-    lines, is_all, line1, line2 = res          
-    
+    lines, is_all, line1, line2 = res
+
     if op=='shuffle':
         lines = get_shuffle(lines)
-        
+
     elif op=='reverse':
         lines = reversed(lines)
-        
+
     elif op=='delete_blanks':
         lines = [s for s in lines if s.strip()]
-        
+
     elif op=='delete_blanks_adjacent':
         for i in reversed(range(len(lines))):
             if i>0 and lines[i].strip()=='' and lines[i-1].strip()=='':
                 del lines[i]
-                
+
     elif op=='delete_dups':
         for i in range(len(lines)-1, 0, -1):
             for j in range(i-1, -1, -1):
                 if lines[i]==lines[j]:
                     del lines[i]
                     break
-        
+
     elif op=='delete_dups_origins':
         dups = get_dups(lines, False)
         for i in reversed(range(len(lines))):
             if lines[i] in dups:
                 del lines[i]
-        
+
     elif op=='delete_dups_adjacent':
         for i in reversed(range(len(lines))):
             if i>0 and lines[i]==lines[i-1]:
                 del lines[i]
-        
+
     else:
         msg_status('Unknown operation: '+op)
         return
-    
+
     set_output(lines, is_all, line1, line2)
     msg_status('Lines operation: '+op)
 
 
 def do_extract_op(op):
-      
+
     res = get_input()
     if not res: return
-    lines, is_all, line1, line2 = res          
-    
+    lines, is_all, line1, line2 = res
+
     if op=='dups':
         lines = get_dups(lines, False)
     elif op=='dups_nocase':
@@ -163,23 +164,23 @@ def do_extract_op(op):
 
     file_open('')
     ed_set_tab_title(op)
-    ed_set_text_all(lines)    
+    ed_set_text_all(lines)
     msg_status('Extract lines: '+op)
 
 
 def do_sort(
-        is_reverse, 
-        is_nocase, 
-        del_dups=False, 
+        is_reverse,
+        is_nocase,
+        del_dups=False,
         del_blanks=True,
         is_numeric=False,
-        offset1=-1, 
+        offset1=-1,
         offset2=-1):
 
     res = get_input()
     if not res: return
-    lines, is_all, line1, line2 = res          
-    
+    lines, is_all, line1, line2 = res
+
     if del_blanks:
         lines = [s for s in lines if s.strip()]
     if del_dups:
@@ -187,7 +188,7 @@ def do_sort(
 
     def _key(item):
         s = item
-        if is_nocase: 
+        if is_nocase:
             s = s.lower()
 
         if (offset1>=0) or (offset2>=0):
@@ -196,17 +197,17 @@ def do_sort(
             if offset1>=0: s = s[offset1:]
 
         #numeric must be after offsets
-        if is_numeric:        
+        if is_numeric:
             num, text = get_num_and_text(s.lstrip())
             #print('parts "%s": %d %s' % (s, num, text))
             s = '%20.20d ' % num + text
-            
+
         return s
 
-        
+
     lines = sorted(lines, key=_key, reverse=is_reverse)
     set_output(lines, is_all, line1, line2)
-    
+
     text = 'Sorted' \
         + (', all text' if is_all else '') \
         + (', reverse' if is_reverse else '') \
@@ -227,15 +228,15 @@ def do_dialog():
     id_offset1 = 7
     id_offset2 = 9
     id_ok = 10
-    
+
     op_rev = ini_read(fn_ini, op_section, 'rev', '0')
     op_nocase = ini_read(fn_ini, op_section, 'nocase', '0')
     op_del_dup = ini_read(fn_ini, op_section, 'del_dup', '1')
     op_del_sp = ini_read(fn_ini, op_section, 'del_sp', '1')
     op_numeric = ini_read(fn_ini, op_section, 'numeric', '0')
-    
+
     op_offset1, op_offset2 = get_offsets()
-    
+
     c1 = chr(1)
     text = '\n'.join([
       c1.join(['type=check', 'pos=6,6,300,0', 'cap=&Sort descending (reverse)', 'val='+op_rev]),
@@ -251,19 +252,19 @@ def do_dialog():
       c1.join(['type=button', 'pos=60,210,160,0', 'cap=OK', 'props=1']),
       c1.join(['type=button', 'pos=164,210,264,0', 'cap=Cancel']),
       ])
-    
+
     res = dlg_custom('Sort', size_x, size_y, text)
     if res is None: return
     btn, text = res
     if btn != id_ok: return
     text = text.splitlines()
-    
+
     ini_write(fn_ini, op_section, 'rev', text[id_rev])
     ini_write(fn_ini, op_section, 'nocase', text[id_nocase])
     ini_write(fn_ini, op_section, 'del_dup', text[id_del_dup])
     ini_write(fn_ini, op_section, 'del_sp', text[id_del_sp])
     ini_write(fn_ini, op_section, 'numeric', text[id_numeric])
-    
+
     is_rev = text[id_rev]=='1'
     is_nocase = text[id_nocase]=='1'
     is_del_dup = text[id_del_dup]=='1'
@@ -271,30 +272,30 @@ def do_dialog():
     is_numeric = text[id_numeric]=='1'
     offset1 = int(text[id_offset1])
     offset2 = int(text[id_offset2])
-    
+
     if (offset1>=0) and (offset2>=0) and (offset1>=offset2):
         msg_show_error('Incorrect offsets: %d..%d' % (offset1, offset2))
         return
-    
+
     return (is_rev, is_nocase, is_del_dup, is_del_sp, is_numeric, offset1, offset2)
-    
+
 
 class Command:
     def sort_asc(self):
         do_sort(False, False)
     def sort_desc(self):
         do_sort(True, False)
-        
+
     def sort_asc_nocase(self):
         do_sort(False, True)
     def sort_desc_nocase(self):
         do_sort(True, True)
-        
+
     def sort_dlg(self):
         res = do_dialog()
         if res is None: return
         do_sort(*res)
-        
+
     def config(self):
         if not os.path.isfile(fn_ini):
             with open(fn_ini, 'w') as f:
@@ -305,7 +306,7 @@ class Command:
         do_line_op('shuffle')
     def reverse(self):
         do_line_op('reverse')
-        
+
     def del_dup(self):
         do_line_op('delete_dups')
     def del_dup_orig(self):
@@ -323,3 +324,8 @@ class Command:
         do_extract_op('dups_nocase')
     def get_uniq(self):
         do_extract_op('unique')
+
+    def ini_sort_all(self):
+        ini_sort(True)
+    def ini_sort_not_keys(self):
+        ini_sort(False)
