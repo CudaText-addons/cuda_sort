@@ -121,12 +121,8 @@ method=ini_sort_not_keys
 lexers=Ini files
 
 
-[item100]
-section=commands
-caption=Sort\-
-method=_
-
 [item101]
 section=commands
-caption=Sort\Edit config
+caption=Sort\Config
 method=config
+menu=o
