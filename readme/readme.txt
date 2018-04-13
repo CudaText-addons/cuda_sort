@@ -13,10 +13,10 @@ Gives also other commands:
 - Remove blank lines
 - Remove adjacent blank lines
 - Ini file: sort sections + keys
-- Ini file: sort sections w/o keys
+- Ini file: sort sections without keys
+- Sort e-mail list by domain - sorts entire file as list of e-mails, first sorts by domain after "@", then by name before "@"
 
-
-To allow to handle all text w/out selection, set the option:
+To allow to handle all text without selection, set the option:
 call plugin command "Edit config", and set
 [op]
 allow_all=1
