@@ -121,6 +121,17 @@ method=ini_sort_not_keys
 lexers=Ini files
 
 
+[item95]
+section=commands
+caption=Sort\-
+method=_
+
+[item96]
+section=commands
+caption=Sort\Sort e-mail list by domain
+method=sort_emails
+
+
 [item101]
 section=commands
 caption=Sort\Config

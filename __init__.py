@@ -329,3 +329,17 @@ class Command:
         ini_sort(True)
     def ini_sort_not_keys(self):
         ini_sort(False)
+
+    def sort_emails(self):
+
+        def _key(s):
+            if ' ' in s or '\t' in s or not '@' in s:
+                return ('', s)
+            n = s.find('@')
+            return (s[n:], s[:n])
+
+        text = ed.get_text_all().splitlines()
+        text = sorted(text, key=_key)
+        ed.set_text_all('\n'.join(text)+'\n')
+        msg_status('Sorted entire text as email list')
+
