@@ -299,8 +299,7 @@ class Command:
 
     def config(self):
         if not os.path.isfile(fn_ini):
-            with open(fn_ini, 'w') as f:
-                f.write('[op]\n')
+            ini_write(fn_ini, op_section, 'allow_all', '0')
         file_open(fn_ini)
 
     def shuffle(self):
