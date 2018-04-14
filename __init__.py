@@ -3,6 +3,7 @@ from random import randint
 from cudatext import *
 from .app_specific import *
 from .sort_ini import *
+from .sort_emails import *
 
 fn_ini = get_ini_fn()
 op_section = 'op'
@@ -331,15 +332,4 @@ class Command:
         ini_sort(False)
 
     def sort_emails(self):
-
-        def _key(s):
-            if ' ' in s or '\t' in s or not '@' in s:
-                return ('', s)
-            n = s.find('@')
-            return (s[n:], s[:n])
-
-        text = ed.get_text_all().splitlines()
-        text = sorted(text, key=_key)
-        ed.set_text_all('\n'.join(text)+'\n')
-        msg_status('Sorted entire text as email list')
-
+        do_sort_emails()
