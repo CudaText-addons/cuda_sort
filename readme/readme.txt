@@ -16,8 +16,7 @@ Gives also other commands:
 - Ini file: sort sections without keys
 - Sort e-mail list by domain - sorts entire file as list of e-mails, first sorts by domain after "@", then by name before "@"
 
-To allow to handle all text without selection, set the option:
-call plugin command "Edit config", and set
+To allow handle all text without selection, set the option: call plugin config by "Options / Settings-plugins / Sort / Config", and change/add option in .ini file:
 [op]
 allow_all=1
 
