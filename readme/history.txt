@@ -1,4 +1,7 @@
 
+2019.01.28
++ on "sort all text" commands, also make final empty line
+
 2018.04.14
 + improve "Sort e-mail list", don't work on non-email text files
 

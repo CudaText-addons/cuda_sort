@@ -5,7 +5,7 @@ def get_ini_fn():
     return os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_sort.ini')
 
 def ed_set_text_all(lines):
-    ed.set_text_all('\n'.join(lines))
+    ed.set_text_all('\n'.join(lines)+'\n')
 
 def ed_get_text_all():
     n = ed.get_line_count()
