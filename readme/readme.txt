@@ -21,5 +21,5 @@ To allow handle all text without selection, set the option: call plugin config b
 allow_all=1
 
 
-Author: Alexey (CudaText)
+Author: Alexey Torgashin (CudaText)
 License: MIT
